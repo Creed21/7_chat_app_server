@@ -11,11 +11,17 @@ import java.io.Serializable;
  * @author Korisnik
  */
 public enum Operation implements Serializable{
+    // users
     LOGIN, 
-    SEND_MESSAGE,
     GET_ALL_USERS,
+    ADD_USER_GROUP, // to do
+    GET_ALL_GROUPS,
+    // direct messages
+    SEND_MESSAGE,
     READ_CHAT_MESSAGES,
-    EXIT;
-    
-//    private static final Long serialVersionUID = 494415052L;
+    // group messages
+    SEND_GROUP_MESSAGE, // to do
+    READ_GROUP_MESSAGE, // to do
+    //exit
+    EXIT;            
 }

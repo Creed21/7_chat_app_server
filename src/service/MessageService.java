@@ -5,7 +5,9 @@
 package service;
 
 import baza.DBBroker;
+import static java.lang.String.format;
 import java.util.List;
+import model.Group;
 import model.User;
 import model.Message;
 import model.Model;
@@ -17,20 +19,21 @@ import requestResponse.Response;
  */
 public class MessageService {
     private DBBroker dBBroker;
-
+    private Response response;
+    
     public MessageService() {
         dBBroker = DBBroker.getInstance();
     }
     
     public Response readMessages(User fromUser, User toUser) {
-        Response response = new Response();
+        response = new Response();
         List<Model> messages = dBBroker.readMessages(fromUser, toUser.getId());
         
         if(messages.isEmpty()) {
             response.setMessage("No messages.");
         } else {
             response.setSuccess(true);
-            response.setMessage(String.format("Message count: %s", messages.size()));
+            response.setMessage(format("Message count: %s", messages.size()));
         }
         
         response.setResultList(messages);
@@ -39,8 +42,40 @@ public class MessageService {
     }
 
     public Response sendMessage(Message sendMessage) {
-//        dBBroker.
-        return null;
+        response = new Response();
+        
+        User fromUser = sendMessage.getFromUser();
+        User toUser = sendMessage.getToUser();
+        
+        if(fromUser == null || toUser == null) {
+            response.setMessage("Invalid send message request");
+            return response;
+        }
+        
+        if(dBBroker.sendMessage(sendMessage)) {
+            response.setSuccess(true);
+            response.setMessage("Successfully sent message");
+        }
+
+        return response;
+    }
+    
+    public Response readGroupMessages(Group group) {
+        response = new Response();
+        if(group == null) {
+            response.setMessage("Invalid group in read group messages request");
+            return response;
+        }
+        
+        List<Model> groupMessages = dBBroker.readGroupMessages(group.getId());
+        if(groupMessages.isEmpty()) {
+            response.setMessage("No messages.");
+            return response;
+        }
+        response.setSuccess(true);
+        response.setMessage(format("Message count: %d", response.getResultList().size()));
+        
+        return response;
     }
     
 }
